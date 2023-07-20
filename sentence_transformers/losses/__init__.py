@@ -10,6 +10,7 @@ from .ContrastiveTensionLoss import *
 from .OnlineContrastiveLoss import *
 from .MegaBatchMarginLoss import *
 from .DenoisingAutoEncoderLoss import *
+from .MultipleNegativeRankingLossGanesh import *
 
 # Triplet losses
 from .BatchHardTripletLoss import *
