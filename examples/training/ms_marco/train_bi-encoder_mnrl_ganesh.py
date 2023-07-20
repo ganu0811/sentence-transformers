@@ -33,7 +33,7 @@ import random
 import pickle
 import argparse
 
-from sentence_transformers.losses import MultipleNegativeRankingLossGanesh
+from sentence_transformers.losses.MultipleNegativeRankingLossGanesh import MultipleNegativesRankingLossGanesh
 
 #### Just some code to print debug information to stdout
 logging.basicConfig(format='%(asctime)s - %(message)s',
