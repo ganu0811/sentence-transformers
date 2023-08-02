@@ -85,7 +85,18 @@ queries_result_list = []
 run = {}
 model_name = "train_bi-encoder-mnrl-distilroberta-base-margin"
 # model = CrossEncoder(sys.argv[1], max_length=300)
-model=CrossEncoder(model_name,max_length=300)
+# model=CrossEncoder(model_name,max_length=300)
+model = SentenceTransformer(model_name)
+
+def predict(bimodel, queries_and_passages):
+    from sentence_transformers.util import cos_sim
+    queries = [pair[0] for pair in queries_and_passages]
+    docs = [pair[0] for pair in queries_and_passages]
+    query_embs = bimodel.encode(queries)
+    doc_embs = bimodel.encode(docs)
+    scores =  cos_sim(query_embs, doc_embs)
+    return scores
+
 for qid in tqdm.tqdm(relevant_qid):
     query = queries[qid]
 
@@ -95,10 +106,10 @@ for qid in tqdm.tqdm(relevant_qid):
 
     cross_inp = [[query, sent] for sent in corpus_sentences]
 
-    if model.config.num_labels > 1: #Cross-Encoder that predict more than 1 score, we use the last and apply softmax
-        cross_scores = model.predict(cross_inp, apply_softmax=True)[:, 1].tolist()
-    else:
-        cross_scores = model.predict(cross_inp).tolist()
+    #if model.config.num_labels > 1: #Cross-Encoder that predict more than 1 score, we use the last and apply softmax
+    #    cross_scores = model.predict(cross_inp, apply_softmax=True)[:, 1].tolist()
+    #else:
+    cross_scores = predict(model, cross_inp).tolist()
 
     cross_scores_sparse = {}
     for idx, pid in enumerate(pids):
