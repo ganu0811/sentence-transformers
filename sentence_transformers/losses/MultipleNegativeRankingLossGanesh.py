@@ -37,7 +37,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
             train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=32)
             train_loss = losses.MultipleNegativesRankingLoss(model=model)
     """
-    def __init__(self, model: SentenceTransformer, scale: float = 20.0, beta: float = 0.75, similarity_fct = util.cos_sim):
+    def __init__(self, model: SentenceTransformer,  beta: float = 0.75, similarity_fct = util.cos_sim):
         """
         :param model: SentenceTransformer model
         :param scale: Output of similarity function is multiplied by scale value
@@ -45,7 +45,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         """
         super(MultipleNegativesRankingLossGanesh, self).__init__()
         self.model = model
-        self.scale = scale
+        # self.scale = scale
         self.similarity_fct = similarity_fct
         self.beta = beta
         self.loss = gBCELoss.gBCE
@@ -56,15 +56,17 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         embeddings_a = reps[0]
         embeddings_b = torch.cat(reps[1:])
 
-        scores = self.similarity_fct(embeddings_a, embeddings_b) * self.scale
+        scores = self.similarity_fct(embeddings_a, embeddings_b) 
         # one hot encode for labels where num_classes is the number of documents tensors are the embedding of a(queries) and embedding  of b(document)
         # The shapes of scores and labels should match. num_labels=scores.shape[1] 
         labels_raw = torch.tensor(range(len(scores)), dtype=torch.long, device=scores.device)  # Example a[i] should match with b[i]
         labels = torch.nn.functional.one_hot(labels, num_classes=scores.shape[1])
-        return torch.mean(self.loss(scores, labels, beta = self.beta))
+        mean_loss= torch.mean(self.loss(scores, labels, beta = self.beta))
+        print(mean_loss)
+        return mean_loss
 
     def get_config_dict(self):
-        return {'scale': self.scale, 'similarity_fct': self.similarity_fct.__name__}
+        return { 'similarity_fct': self.similarity_fct.__name__}
 
 
 
