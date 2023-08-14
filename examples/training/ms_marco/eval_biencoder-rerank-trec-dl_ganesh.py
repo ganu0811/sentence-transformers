@@ -1,3 +1,4 @@
+#coding: utf-8
 """
 This file evaluates CrossEncoder on the TREC 2019 Deep Learning (DL) Track: https://arxiv.org/abs/2003.07820
 
@@ -83,19 +84,20 @@ logging.info("Queries: {}".format(len(queries)))
 
 queries_result_list = []
 run = {}
-model_name = "train_bi-encoder-mnrl-distilroberta-base-margin"
+model_name = "C:\\Users\\Rajaas\\Desktop\\Dissertation\\sentence-transformers\\examples\\training\\ms_marco\\train_bi-encoder-mnrl-distilroberta-base-margin"
 # model = CrossEncoder(sys.argv[1], max_length=300)
 # model=CrossEncoder(model_name,max_length=300)
 model = SentenceTransformer(model_name)
 
 def predict(bimodel, queries_and_passages):
+    print("scoring %d queries and passages" % len(queries_and_passages))
     from sentence_transformers.util import cos_sim
     queries = [pair[0] for pair in queries_and_passages]
-    docs = [pair[0] for pair in queries_and_passages]
+    docs = [pair[1] for pair in queries_and_passages]
     query_embs = bimodel.encode(queries)
     doc_embs = bimodel.encode(docs)
     scores =  cos_sim(query_embs, doc_embs)
-    return scores
+    return scores[0]
 
 for qid in tqdm.tqdm(relevant_qid):
     query = queries[qid]
@@ -117,8 +119,7 @@ for qid in tqdm.tqdm(relevant_qid):
 
     sparse_scores = cross_scores_sparse
     run[qid] = {}
-    for pid in sparse_scores:
-        run[qid][pid] = float(sparse_scores[pid])
+    for pid in sparse_scores:(sparse_scores[pid])
 
 
 evaluator = pytrec_eval.RelevanceEvaluator(relevant_docs, {'ndcg_cut.10'})
