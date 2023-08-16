@@ -7,8 +7,8 @@ import torch
 def gBCE(predicted_scores, true_probabilities, beta):
      
      
-     print(predicted_scores)
-     print(true_probabilities)
+     print("predicted_scores", predicted_scores)
+     print("true_probs", true_probabilities)
      predicted_probs=torch.sigmoid(predicted_scores)
      eps= 1e-5
      #predicted_probs=torch.clamp(predicted_probs,min=eps, max=1-eps)
@@ -16,9 +16,9 @@ def gBCE(predicted_scores, true_probabilities, beta):
      negative_part=(1-true_probabilities)*(torch.log(1-predicted_probs))
      # sigmoid_beta = sigmoid(beta * scores[0])  # for the positive example
      # neg_scores = [sigmoid(scores[i]) for i in negative_indices]  # for the negative examples
-     print(predicted_probs)
-     print(positive_part)
-     print(negative_part)
+     print("predicted_probs", predicted_probs)
+     print("gBCE positive", positive_part)
+     print("gBCE negAtive", negative_part)
      return - (positive_part + negative_part)
 
 
