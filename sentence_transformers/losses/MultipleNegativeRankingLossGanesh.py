@@ -59,10 +59,13 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         scores = self.similarity_fct(embeddings_a, embeddings_b) 
         # one hot encode for labels where num_classes is the number of documents tensors are the embedding of a(queries) and embedding  of b(document)
         # The shapes of scores and labels should match. num_labels=scores.shape[1] 
+        print("labels[0]=",labels)
         labels_raw = torch.tensor(range(len(scores)), dtype=torch.long, device=scores.device)  # Example a[i] should match with b[i]
-        labels = torch.nn.functional.one_hot(labels, num_classes=scores.shape[1])
+        print("labels_raw", labels_raw)
+        labels = torch.nn.functional.one_hot(labels_raw, num_classes=scores.shape[1])
+        print("labels[1]=",labels)
         mean_loss= torch.mean(self.loss(scores, labels, beta = self.beta))
-        print(mean_loss)
+        print("mean loss", mean_loss)
         return mean_loss
 
     def get_config_dict(self):
