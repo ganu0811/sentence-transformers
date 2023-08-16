@@ -48,7 +48,7 @@ parser.add_argument("--train_batch_size", default=4, type=int)
 parser.add_argument("--max_seq_length", default=300, type=int)
 parser.add_argument("--model_name", default="distilroberta-base")
 parser.add_argument("--max_passages", default=0, type=int)
-parser.add_argument("--epochs", default=10, type=int)
+parser.add_argument("--epochs", default=5, type=int)
 parser.add_argument("--pooling", default="mean")
 parser.add_argument("--negs_to_use", default=None, help="From which systems should negatives be used? Multiple systems seperated by comma. None = all")
 parser.add_argument("--warmup_steps", default=1000, type=int)
@@ -235,8 +235,16 @@ train_dataset = MSMARCODataset(train_queries, corpus=corpus)
 train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
 train_loss = MultipleNegativesRankingLossGanesh(model=model)
 
+# def train_epoch(model,train_dataloader,train_loss,epoch):
+#         epoch_loss=0
+#         for batch in train_dataloader:
+#             loss=train_loss(model,batch[0],batch[1])
+#             epoch_loss += loss.item()
+#         print(f"Epoch {epoch} loss: {epoch_loss}")
+    
+
 # Train the model
-model.fit(train_objectives=[(train_dataloader, train_loss)],
+hist=model.fit(train_objectives=[(train_dataloader, train_loss)],
           epochs=num_epochs,
           warmup_steps=args.warmup_steps,
           use_amp=True,
@@ -244,6 +252,9 @@ model.fit(train_objectives=[(train_dataloader, train_loss)],
           checkpoint_save_steps=len(train_dataloader),
           optimizer_params = {'lr': args.lr},
           )
+print(hist)
+# for epoch in range(num_epochs):
+#     train_epoch(model,train_dataloader,train_loss,epoch)
 
 # Save the model
 model.save(model_save_path)
