@@ -228,7 +228,8 @@ class MSMARCODataset(Dataset):
 # For training the SentenceTransformer model, we need a dataset, a dataloader, and a loss used for training.
 train_dataset = MSMARCODataset(train_queries, corpus=corpus)
 train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
-train_loss = MultipleNegativesRankingLossGanesh(model=model)
+train_loss = MultipleNegativesRankingLossGanesh(model=model,corpus=corpus)
+print(train_loss)
 
 
 # Train the model
