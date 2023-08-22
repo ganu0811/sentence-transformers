@@ -97,6 +97,8 @@ def predict(bimodel, queries_and_passages):
     query_embs = bimodel.encode(queries)
     doc_embs = bimodel.encode(docs)
     scores =  cos_sim(query_embs, doc_embs)
+    # alpha=(scores.shape[1]-1/len(docs))
+    # beta=alpha*((t*(1-1/alpha) + 1/alpha))
     return scores[0]
 
 for qid in tqdm.tqdm(relevant_qid):
