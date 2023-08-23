@@ -84,10 +84,10 @@ logging.info("Queries: {}".format(len(queries)))
 
 queries_result_list = []
 run = {}
-# model_name = "C:\\Users\\Rajaas\\Desktop\\Dissertation\\sentence-transformers\\examples\\training\\ms_marco\\train_bi-encoder-mnrl-distilroberta-base-margin"
+model_name = r"C:\Users\\Rajaas\\Desktop\\Dissertation\\78000 for gBCE model with hard negatives\\78000"
 # model = CrossEncoder(sys.argv[1], max_length=300)
 # model=CrossEncoder(model_name,max_length=300)
-model = SentenceTransformer('distilroberta-base')
+model = SentenceTransformer(model_name)
 
 def predict(bimodel, queries_and_passages):
     print("scoring %d queries and passages" % len(queries_and_passages))
