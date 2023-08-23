@@ -58,6 +58,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         embeddings_b = torch.cat(reps[1:])
 
         scores = self.similarity_fct(embeddings_a, embeddings_b) 
+        print('cos_sim',scores)
         alpha=(scores.shape[1]/(len(self.corpus)-1))
         beta=alpha*((self.t*(1-1/alpha) + 1/alpha))
         print("beta",beta)
@@ -71,7 +72,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         print("labels_raw", labels_raw)
         labels = torch.nn.functional.one_hot(labels_raw, num_classes=scores.shape[1])
         print("labels[1]=",labels)
-        mean_loss= torch.mean(self.loss(scores, labels, t = self.t))
+        mean_loss= torch.mean(self.loss(scores, labels, beta))
         print("mean loss", mean_loss)
         return mean_loss
 
