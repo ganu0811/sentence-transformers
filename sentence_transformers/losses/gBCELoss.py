@@ -9,7 +9,7 @@ def gBCE(predicted_scores, true_probabilities, beta,):
      
      print("predicted_scores", predicted_scores)
      print("true_probs", true_probabilities)
-     predicted_probs=(predicted_scores + 1)/2
+     predicted_probs=torch.sigmoid(predicted_scores)
      max_positive_probs = torch.max(predicted_probs * true_probabilities, dim=1, keepdim=True)[0]
      max_negative_probs = torch.max(predicted_probs * (1-true_probabilities), dim = 1, keepdim = True)[0]
      hits = torch.sum(max_positive_probs > max_negative_probs).item()
