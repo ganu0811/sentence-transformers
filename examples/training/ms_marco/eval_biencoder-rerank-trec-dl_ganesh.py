@@ -23,6 +23,7 @@ import sys
 import pytrec_eval
 from sentence_transformers import SentenceTransformer, util, CrossEncoder
 import os
+import torch
 
 data_folder = 'trec2019-data'
 os.makedirs(data_folder, exist_ok=True)
@@ -96,7 +97,9 @@ def predict(bimodel, queries_and_passages):
     docs = [pair[1] for pair in queries_and_passages]
     query_embs = bimodel.encode(queries)
     doc_embs = bimodel.encode(docs)
-    scores =  cos_sim(query_embs, doc_embs)
+    query_embs1 = torch.tensor(query_embs).float()
+    doc_embs1   = torch.tensor(doc_embs).float()
+    scores =  torch.mm(query_embs1, doc_embs1.transpose(0,1))/100-2
     # alpha=(scores.shape[1]-1/len(docs))
     # beta=alpha*((t*(1-1/alpha) + 1/alpha))
     return scores[0]
@@ -124,11 +127,13 @@ for qid in tqdm.tqdm(relevant_qid):
     for pid in sparse_scores:(sparse_scores[pid])
 
 
-evaluator = pytrec_eval.RelevanceEvaluator(relevant_docs, {'ndcg_cut.10'})
+evaluator = pytrec_eval.RelevanceEvaluator(relevant_docs, {'ndcg_cut.10','ndcg_cut.100','map'})
 scores = evaluator.evaluate(run)
 
 print("Queries:", len(relevant_qid))
 print("NDCG@10: {:.2f}".format(np.mean([ele["ndcg_cut_10"] for ele in scores.values()])*100))
+print("NDCG@100:{:.2f}".format(np.mean([ele["ndcg_cut_100"]for ele in scores.values()])*100))
+print("MAP:{:.2f}".format(np.mean([ele["map"]for ele in scores.values()])*100))
 
 
 
