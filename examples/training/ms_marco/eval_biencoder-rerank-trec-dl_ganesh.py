@@ -85,7 +85,7 @@ logging.info("Queries: {}".format(len(queries)))
 
 queries_result_list = []
 run = {}
-model_name = r"C:\Users\\Rajaas\\Desktop\\Dissertation\\78000 for gBCE model with hard negatives\\78000"
+model_name = r"C:\\Users\\Rajaas\\Desktop\\Dissertation\\78000 for gBCE model with hard negatives\\78000"
 # model = CrossEncoder(sys.argv[1], max_length=300)
 # model=CrossEncoder(model_name,max_length=300)
 model = SentenceTransformer(model_name)
@@ -96,13 +96,21 @@ def predict(bimodel, queries_and_passages):
     queries = [pair[0] for pair in queries_and_passages]
     docs = [pair[1] for pair in queries_and_passages]
     query_embs = bimodel.encode(queries)
+    print('query_embs',query_embs)
     doc_embs = bimodel.encode(docs)
+    print('doc_embs',doc_embs)
     query_embs1 = torch.tensor(query_embs).float()
     doc_embs1   = torch.tensor(doc_embs).float()
     scores =  torch.mm(query_embs1, doc_embs1.transpose(0,1))/100-2
+    sig_scores = torch.sigmoid(scores)
+    print(sig_scores.shape)
+    print('scores',sig_scores)
+    
+    
     # alpha=(scores.shape[1]-1/len(docs))
     # beta=alpha*((t*(1-1/alpha) + 1/alpha))
-    return scores[0]
+    return sig_scores[0]
+
 
 for qid in tqdm.tqdm(relevant_qid):
     query = queries[qid]
@@ -124,7 +132,11 @@ for qid in tqdm.tqdm(relevant_qid):
 
     sparse_scores = cross_scores_sparse
     run[qid] = {}
-    for pid in sparse_scores:(sparse_scores[pid])
+    for pid in sparse_scores:
+        run[qid][pid] = float(sparse_scores[pid])
+
+   
+    
 
 
 evaluator = pytrec_eval.RelevanceEvaluator(relevant_docs, {'ndcg_cut.10','ndcg_cut.100','map'})
