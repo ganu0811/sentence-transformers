@@ -37,7 +37,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
             train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=32)
             train_loss = losses.MultipleNegativesRankingLoss(model=model)
     """
-    def __init__(self, model: SentenceTransformer, corpus,  t: float = 0.75,similarity_fct=util.cos_sim):
+    def __init__(self, model: SentenceTransformer, corpus,  t: float = 1.0,similarity_fct=util.cos_sim):
         """
         :param model: SentenceTransformer model
         :param scale: Output of similarity function is multiplied by scale value
@@ -58,7 +58,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         embeddings_b = torch.cat(reps[1:])
 
         scores = torch.mm(embeddings_a, embeddings_b.transpose(0,1))/100-2 
-        print('cos_sim',scores)
+        print('scores tensors',scores)
         alpha=(scores.shape[1]/(len(self.corpus)-1))
         beta=alpha*((self.t*(1-1/alpha) + 1/alpha))
         print("beta",beta)
