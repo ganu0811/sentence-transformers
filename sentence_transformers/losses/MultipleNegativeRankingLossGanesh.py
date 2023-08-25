@@ -37,7 +37,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
             train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=32)
             train_loss = losses.MultipleNegativesRankingLoss(model=model)
     """
-    def __init__(self, model: SentenceTransformer, corpus,  t: float = 0.75,similarity_fct=util.cos_sim):
+    def __init__(self, model: SentenceTransformer, corpus,  t: float = 1.0,similarity_fct=util.cos_sim):
         """
         :param model: SentenceTransformer model
         :param scale: Output of similarity function is multiplied by scale value
