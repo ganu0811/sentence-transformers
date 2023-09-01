@@ -5,3 +5,7 @@ In line 231, I have changed the loss as MultipleNegativesRankingLossGanesh. In t
 MultipleNegativesRankingLossGanesh:
 In MultipleNegativesRankingLossGanesh, line 40, i have introduced the 't' parameter and have set its value as 0.75 which a float datatype.
 In line 51, self.loss calls our gBCEloss.
+from line 55-68, we do compute beta, scores and calulate the mean loss.
+
+gBCE loss:
+created a new file for gBCE loss and have defined it. Takes true_probabilities, ground_truth_labels and beta as the input and computes the gBCE loss.
