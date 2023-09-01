@@ -37,7 +37,7 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
             train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=32)
             train_loss = losses.MultipleNegativesRankingLoss(model=model)
     """
-    def __init__(self, model: SentenceTransformer, corpus,  t: float = 0.0,similarity_fct=util.cos_sim):
+    def __init__(self, model: SentenceTransformer, corpus,  t: float = 0.75,similarity_fct=util.cos_sim):
         """
         :param model: SentenceTransformer model
         :param scale: Output of similarity function is multiplied by scale value
@@ -61,17 +61,8 @@ class MultipleNegativesRankingLossGanesh(nn.Module):
         print('scores tensors',scores)
         alpha=(scores.shape[1]/(len(self.corpus)-1))
         beta=alpha*((self.t*(1-1/alpha) + 1/alpha))
-        print("beta",beta)
-        print('corpus',len(self.corpus))
-        print('number of negatives',scores.shape[1])
-        print('t',self.t)
-        # one hot encode for labels where num_classes is the number of documents tensors are the embedding of a(queries) and embedding  of b(document)
-        # The shapes of scores and labels should match. num_labels=scores.shape[1] 
-        print("labels[0]=",labels)
-        labels_raw = torch.tensor(range(len(scores)), dtype=torch.long, device=scores.device)  # Example a[i] should match with b[i]
-        print("labels_raw", labels_raw)
+        labels_raw = torch.tensor(range(len(scores)), dtype=torch.long, device=scores.device)  
         labels = torch.nn.functional.one_hot(labels_raw, num_classes=scores.shape[1])
-        print("labels[1]=",labels)
         mean_loss= torch.mean(self.loss(scores, labels, beta))
         print("mean loss", mean_loss)
         return mean_loss
